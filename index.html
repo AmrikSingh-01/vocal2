@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		*{
+			margin: 0;padding: 0;
+		}
+		body{
+			height:100vh;
+			display:grid;
+			place-items: center;
+		}
+		#photo
+		{
+			background-size: cover;
+			box-shadow: 0 0 5px black;
+			margin: 0;
+			padding: 0;
+		
+			position:relative;
+		}
+		img#i1{
+			height:min(80vh,80vw);
+			filter:blur(5px);
+			/*position:absolute;*/
+		}
+		#inner
+		{
+			position:absolute;
+			width:0%;
+			height:0%;
+			left:0;
+			top:0;
+			overflow:hidden;
+			
+			left:50%;
+			top:50%;
+			transform:translate(-50%,-50%);
+			transition: width 2s, height 2s;
+		}
+		img:not(#i1)
+		{
+			height:min(80vh,80vw);
+			transform:translate(-50%,-50%);
+			transition:transform 2s;
+			filter:brightness(150%) saturate(200%);
+		}
+		/*#photo:hover #inner
+		{
+			width:100%;
+			height:100%;
+		}
+		#photo:hover #i
+		{
+			transform:translate(0%,0%);
+		}
+		*/
+	</style>
+</head>
+<body>
+	<div id="photo">
+		<img id="i1" src="img.jpg" alt="">
+		<div id="inner">
+			<img id="i" src="img.jpg" alt="">
+		</div>
+	</div>
+	<div id="status"></div>
+	<button id="startButton">click</button>
+	<script>
+		const startButton = document.getElementById('startButton');
+const statusDiv = document.getElementById('status');
+const aud = new Audio("aud1.mp4");
+const audi = new Audio("aud2.mp4");
+let recognition;
+const inn=document.getElementById("inner");
+		  const i=document.getElementById("i");
+// Check if the browser supports the Web Speech API
+startButton.addEventListener('click',(e)=>{
+if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+  // Initialize the SpeechRecognition object
+  recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+
+  // Set properties for the recognition
+  recognition.lang = 'en-US'; // Specify the language for speech recognition
+  recognition.continuous = true; // Keep listening until stopped manually
+
+  // Event handler when speech is recognized
+  recognition.onresult = (event) => {
+    const transcript = event.results[event.results.length - 1][0].transcript.trim();
+    statusDiv.textContent = `You said: ${transcript}`;
+
+    // Check if the recognized speech contains the specific word or phrase
+    if (transcript.includes('Khul Ja Sim Sim') && !(inn.classList.contains('khula'))) {
+      // Replace 'your specific word or phrase' with the actual word or phrase you want to trigger the event
+      // Perform the action you want when the specific word or phrase is recognized
+      //console.log('Specific word or phrase detected!'); // For example, you can log a message in the console
+      // Your custom event handling code here...
+		
+		i.style.transform="translate(0%,0%)";
+		inn.style.width="100%";
+		inn.style.height="100%";
+		aud.play();
+		inn.classList.toggle('khula');
+    }
+	if (transcript.includes('Band Ho Ja Sim Sim') && inn.classList.contains('khula')) {
+		// Replace 'your specific word or phrase' with the actual word or phrase you want to trigger the event
+		// Perform the action you want when the specific word or phrase is recognized
+		//console.log('Specific word or phrase detected!'); // For example, you can log a message in the console
+		// Your custom event handling code here...
+		  
+		  i.style.transform="translate(-50%,-50%)";
+		  inn.style.width="0%";
+		  inn.style.height="0%";
+		  audi.play();
+		  inn.classList.toggle('khula');
+	  }
+
+  };
+
+  // Event handler when recognition is started
+  recognition.onstart = () => {
+    statusDiv.textContent = 'Listening...';
+  };
+
+  // Event handler when recognition is stopped (either manually or due to an error)
+  recognition.onend = () => {
+    statusDiv.textContent = 'Recognition stopped.';
+  };
+} else {
+  statusDiv.textContent = 'Speech recognition is not supported in this browser.';
+}
+
+// Event handler for the button click to start listening
+startButton.addEventListener('click', () => {
+  if (recognition) {
+    recognition.start();
+  }
+});
+});
+	</script>
+</body>
+</html>
